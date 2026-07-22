@@ -1,0 +1,106 @@
+/* ==========================================================================
+   SCRIPTA — Base
+   Reset + fundamentos globais.
+   ========================================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fundo com textura sutil: gradiente radial que ancora o verde neon
+   no canto superior, como um facho de luz sobre a página. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 600px 400px at 15% -10%, var(--accent-soft), transparent 60%),
+    radial-gradient(ellipse 500px 500px at 110% 30%, rgba(0,217,255,0.05), transparent 60%);
+  pointer-events: none;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; border: none; background: none; cursor: pointer; color: inherit; }
+input, textarea { font-family: inherit; color: inherit; }
+ul, ol { list-style: none; }
+img, svg { display: block; max-width: 100%; }
+
+::selection {
+  background: var(--accent);
+  color: var(--text-on-accent);
+}
+
+/* Scrollbar discreta */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-glass); border-radius: var(--radius-pill); }
+
+/* Foco visível — acessibilidade nunca é opcional */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---- Shell do "app nativo" ---- */
+.app-shell {
+  position: relative;
+  z-index: 1;
+  max-width: var(--app-max-width);
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, rgba(22,25,29,0.4), transparent 200px);
+}
+
+.screen {
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  padding: var(--sp-5) var(--sp-5) calc(var(--nav-height) + var(--sp-5));
+  animation: screen-in var(--dur-slow) var(--ease-out);
+}
+
+.screen.is-active { display: flex; }
+
+@keyframes screen-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

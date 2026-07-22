@@ -1,0 +1,87 @@
+/* ==========================================================================
+   SCRIPTA — Design Tokens
+   Sistema: Dark Premium, azul neon como assinatura, glassmorphism sutil.
+   Referência conceitual: "manuscrito vivo" — a caneta que nunca para.
+   ========================================================================== */
+
+:root {
+  /* ---- Cor: base ---- */
+  --bg-void: #0b0d10;          /* fundo raiz, charcoal quase preto (neutro) */
+  --bg-surface: #16191d;       /* superfície de cards */
+  --bg-surface-raised: #1d2126;/* superfície elevada (modais, sheets) */
+  --bg-glass: rgba(22, 25, 29, 0.6);
+
+  /* ---- Cor: assinatura (azul neon) ---- */
+  --accent: #00d9ff;           /* azul neon principal — cor de assinatura do app */
+  --accent-dim: #0a8fb8;       /* azul neon apagado, uso secundário */
+  --accent-glow: rgba(0, 217, 255, 0.30);
+  --accent-soft: rgba(0, 217, 255, 0.12);
+
+  /* ---- Cor: texto ---- */
+  --text-primary: #f2f4f2;     /* branco quase puro */
+  --text-secondary: #9aa3a0;   /* cinza neutro */
+  --text-muted: #656e6b;
+  --text-on-accent: #031820;
+
+  /* ---- Cor: estado ---- */
+  --danger: #ff5c5c;
+  --warning: #ffc75c;
+  --success: var(--accent);
+
+  /* ---- Bordas & vidro ---- */
+  --border-glass: rgba(0, 217, 255, 0.18);
+  --border-subtle: rgba(242, 244, 242, 0.08);
+
+  /* ---- Tipografia ---- */
+  --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 2rem;
+  --fs-3xl: 2.75rem;
+
+  /* ---- Espaçamento ---- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+
+  /* ---- Raio & sombra ---- */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lift: 0 16px 40px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 24px var(--accent-glow);
+
+  /* ---- Movimento ---- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 150ms;
+  --dur-base: 280ms;
+  --dur-slow: 520ms;
+
+  /* ---- Layout do "app nativo" ---- */
+  --app-max-width: 480px;
+  --nav-height: 76px;
+  --status-height: env(safe-area-inset-top, 24px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+  }
+}

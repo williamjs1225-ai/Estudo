@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Scripta — Seu professor particular de escrita</title>
+<meta name="description" content="Scripta: melhore escrita, gramática e vocabulário com um coach de IA disponível 24h.">
+<meta name="theme-color" content="#0b0d10">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Scripta">
+
+<!-- Fontes -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+<!-- Estilos -->
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/screens.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ======================= SPLASH SCREEN ======================= -->
+  <section id="screen-splash" class="screen is-active" aria-label="Carregando">
+    <div class="splash__stage">
+      <svg class="splash__mark" viewBox="0 0 120 120" aria-hidden="true">
+        <path class="splash__path" d="M28 88 C28 88 34 32 60 32 C86 32 62 60 40 66 C18 72 30 96 58 92 C86 88 92 60 92 60" />
+      </svg>
+      <div style="text-align:center">
+        <div class="splash__wordmark">scripta</div>
+        <div class="splash__tagline">seu professor particular de escrita</div>
+      </div>
+    </div>
+    <div class="splash__loader" role="status" aria-label="Carregando aplicativo"></div>
+  </section>
+
+  <!-- ======================= HOME SCREEN ======================= -->
+  <section id="screen-home" class="screen" aria-label="Início">
+    <header class="home__header">
+      <div class="home__greeting">
+        <p id="home-date">Segunda-feira, 6 de julho</p>
+        <h1>Olá, <span id="home-username">Williams</span> 👋</h1>
+      </div>
+      <div class="home__avatar" id="home-avatar">W</div>
+    </header>
+
+    <!-- Sua sequência -->
+    <div class="glass-card streak-card">
+      <div class="streak-card__top">
+        <span class="streak-card__label">Sua sequência</span>
+        <span class="streak-card__flame">🔥</span>
+      </div>
+      <div class="streak-card__count"><strong id="home-streak">12</strong> dias</div>
+      <div class="streak-card__week" id="home-week-dots" aria-label="Dias da semana com atividade concluída">
+        <!-- preenchido via home.js: 7 dias, cada um com letra + check -->
+      </div>
+    </div>
+
+    <!-- Progresso geral -->
+    <div class="section-title">
+      <h2>Progresso geral</h2>
+    </div>
+    <div class="stats-row">
+      <div class="glass-card stat-chip">
+        <strong id="stat-words">24.531</strong>
+        <span>Palavras escritas</span>
+        <em class="stat-chip__delta" id="stat-words-delta">+12%</em>
+      </div>
+      <div class="glass-card stat-chip">
+        <strong id="stat-texts">18</strong>
+        <span>Textos escritos</span>
+        <em class="stat-chip__delta" id="stat-texts-delta">+2</em>
+      </div>
+      <div class="glass-card stat-chip">
+        <strong id="stat-vocab">1.248</strong>
+        <span>Palavras aprendidas</span>
+        <em class="stat-chip__delta" id="stat-vocab-delta">+18</em>
+      </div>
+    </div>
+
+    <!-- Continuar -->
+    <div class="section-title">
+      <h2>Continuar</h2>
+    </div>
+    <button type="button" class="glass-card recent-text-card" id="continue-card" data-nav="editor">
+      <div class="recent-text-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+      </div>
+      <div class="recent-text-card__body">
+        <h3 id="recent-title">Texto: Meu diário</h3>
+        <p class="recent-text-card__meta"><span id="recent-words">1.256 palavras</span> · <span id="recent-time">há 2h</span></p>
+      </div>
+      <svg class="recent-text-card__chevron" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+
+    <!-- Sugestão da IA -->
+    <div class="glass-card ai-suggestion-card" id="ai-suggestion-card">
+      <div class="ai-suggestion-card__header">
+        <span>Sugestão da IA</span>
+        <button type="button" class="btn-ghost ai-suggestion-card__dismiss" id="ai-suggestion-dismiss" aria-label="Dispensar sugestão">✕</button>
+      </div>
+      <p id="home-ai-tip">Que tal escrever sobre um momento marcante do seu dia?</p>
+      <button type="button" class="btn btn-primary" data-nav="editor">Escrever agora</button>
+    </div>
+
+    <!-- IA Coach -->
+    <button type="button" class="glass-card coach-card" data-nav="coach">
+      <div class="coach-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+      </div>
+      <div class="coach-card__body">
+        <div class="coach-card__title-row"><strong>IA Coach</strong><span class="badge coach-card__online">● online</span></div>
+        <p>Posso te ajudar a melhorar este texto, sugerir ideias, corrigir ou explicar regras. É só pedir!</p>
+        <span class="coach-card__cta">Conversar com IA</span>
+      </div>
+    </button>
+
+    <!-- Exercícios -->
+    <button type="button" class="glass-card coach-card" data-nav="exercises">
+      <div class="coach-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      </div>
+      <div class="coach-card__body">
+        <div class="coach-card__title-row"><strong>Exercícios</strong></div>
+        <p>Pratique gramática, vocabulário e interpretação com desafios que sobem de nível conforme você acerta.</p>
+        <span class="coach-card__cta">Praticar agora</span>
+      </div>
+    </button>
+
+    <!-- Minijogos -->
+    <button type="button" class="glass-card coach-card" data-nav="games">
+      <div class="coach-card__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg>
+      </div>
+      <div class="coach-card__body">
+        <div class="coach-card__title-row"><strong>Minijogos</strong></div>
+        <p>19 jogos de palavras pra praticar português brincando — forca, memória, velocidade e muito mais.</p>
+        <span class="coach-card__cta">Jogar agora</span>
+      </div>
+    </button>
+  </section>
+
+  <!-- ======================= ESCRITA (EDITOR) ======================= -->
+  <section id="screen-editor" class="screen" aria-label="Escrita">
+    <header class="screen-header">
+      <h1>Escrita</h1>
+      <button type="button" class="btn-icon" id="editor-focus-toggle" aria-label="Modo foco" title="Modo foco">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 00-2 2v3M21 8V5a2 2 0 00-2-2h-3M16 21h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+      </button>
+    </header>
+
+    <div class="segmented" role="tablist">
+      <button type="button" class="segmented__item is-active" data-tab="editor-new" role="tab">Novo texto</button>
+      <button type="button" class="segmented__item" data-tab="editor-list" role="tab">Meus textos</button>
+      <button type="button" class="segmented__item" data-tab="editor-challenges" role="tab">Desafios</button>
+    </div>
+
+    <!-- Aba: Novo texto -->
+    <div class="tab-panel is-active" id="editor-new">
+      <input type="text" id="editor-title" class="editor__title-input" placeholder="Título do seu texto" spellcheck="false" autocorrect="off" autocapitalize="sentences" autocomplete="off" data-custom-keyboard inputmode="none">
+      <div class="editor__textwrap">
+        <div class="editor__highlight-layer" id="editor-highlight-layer" aria-hidden="true"></div>
+        <textarea id="editor-body" class="editor__textarea" placeholder="Comece a escrever aqui..." spellcheck="false" autocorrect="off" autocapitalize="sentences" data-custom-keyboard inputmode="none"></textarea>
+      </div>
+
+      <div class="editor__toolbar">
+        <button type="button" class="btn-format" data-format="bold"><strong>B</strong></button>
+        <button type="button" class="btn-format" data-format="italic"><em>I</em></button>
+        <button type="button" class="btn-format" data-format="underline"><u>U</u></button>
+        <span class="editor__toolbar-count" id="editor-word-count">0 palavras</span>
+      </div>
+
+      <div class="editor__actions">
+        <button type="button" class="btn btn-secondary" id="editor-save">Salvar</button>
+        <button type="button" class="btn btn-primary" id="editor-analyze">✦ Analisar com IA</button>
+      </div>
+    </div>
+
+    <!-- Aba: Meus textos -->
+    <div class="tab-panel" id="editor-list">
+      <ul class="text-list" id="editor-text-list"><!-- populado via editor.js --></ul>
+    </div>
+
+    <!-- Aba: Desafios -->
+    <div class="tab-panel" id="editor-challenges">
+      <p class="tab-panel__hint">Sem ideia do que escrever? Toque num desafio para começar.</p>
+      <ul class="challenge-list" id="editor-challenge-list"><!-- populado via editor.js --></ul>
+    </div>
+
+    <button type="button" class="focus-exit-btn" id="editor-focus-exit" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      Sair do modo foco
+    </button>
+  </section>
+
+  <!-- ======================= ANÁLISE COM IA (overlay sobre a Escrita) ======================= -->
+  <section id="screen-analysis" class="screen" aria-label="Análise com IA">
+    <header class="screen-header screen-header--back">
+      <button type="button" class="btn-icon" data-nav="editor" aria-label="Voltar">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <h1>Análise com IA</h1>
+    </header>
+
+    <div class="glass-card analysis-score">
+      <div class="analysis-score__ring">
+        <svg width="90" height="90" viewBox="0 0 90 90" class="progress-ring">
+          <circle class="progress-ring__track" cx="45" cy="45" r="38" stroke-width="8"/>
+          <circle class="progress-ring__fill" cx="45" cy="45" r="38" stroke-width="8" id="analysis-ring"/>
+        </svg>
+        <div class="analysis-score__value" id="analysis-score-value">92</div>
+      </div>
+      <div>
+        <h3 id="analysis-label">Excelente!</h3>
+        <p id="analysis-description">Seu texto está claro, coerente e bem estruturado.</p>
+      </div>
+    </div>
+
+    <ul class="metric-list" id="analysis-metrics"><!-- populado via editor.js --></ul>
+  </section>
+
+  <!-- ======================= IA COACH ======================= -->
+  <section id="screen-coach" class="screen" aria-label="IA Coach">
+    <header class="screen-header">
+      <h1>IA Coach</h1>
+      <span class="badge coach-card__online">● online</span>
+    </header>
+
+    <div class="chat-log" id="chat-log"><!-- populado via coach.js --></div>
+
+    <form class="chat-input-row" id="chat-form">
+      <input type="text" id="chat-input" placeholder="Digite sua mensagem..." autocomplete="off" spellcheck="false" autocorrect="off" data-custom-keyboard inputmode="none">
+      <button type="submit" class="btn-icon chat-send" aria-label="Enviar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      </button>
+    </form>
+  </section>
+
+  <!-- ======================= EXERCÍCIOS ======================= -->
+  <section id="screen-exercises" class="screen" aria-label="Exercícios">
+    <header class="screen-header">
+      <h1>Exercícios</h1>
+    </header>
+    <div class="exercises-meta">
+      <span id="exercises-level" class="badge">Nível 1 de 5</span>
+      <span id="exercises-completed" class="exercises-meta__count">0 concluídos</span>
+    </div>
+
+    <div id="exercises-type-grid-wrap">
+      <p class="tab-panel__hint" style="padding-top:0">Escolha um tipo de exercício para começar.</p>
+      <div class="exercise-type-grid" id="exercises-type-grid"><!-- populado via exercises.js --></div>
+    </div>
+
+    <div id="exercises-question-area" hidden>
+      <button type="button" class="btn-icon" id="exercises-back" aria-label="Voltar aos tipos" style="margin-bottom: var(--sp-4)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="glass-card reading-question" id="exercises-question-card"></div>
+      <div class="glass-card exercise-feedback" id="exercises-feedback" hidden></div>
+      <button type="button" class="btn btn-primary" id="exercises-next">Próximo exercício</button>
+    </div>
+  </section>
+
+  <!-- ======================= MINIJOGOS: HUB ======================= -->
+  <section id="screen-games" class="screen" aria-label="Minijogos">
+    <header class="screen-header">
+      <h1>Minijogos</h1>
+    </header>
+
+    <div class="glass-card games-profile-card">
+      <div class="games-profile-card__level">
+        <div class="games-profile-card__level-ring">
+          <svg width="56" height="56" viewBox="0 0 56 56" class="progress-ring">
+            <circle class="progress-ring__track" cx="28" cy="28" r="24" stroke-width="5"/>
+            <circle class="progress-ring__fill" cx="28" cy="28" r="24" stroke-width="5" id="games-level-ring"/>
+          </svg>
+          <span class="games-profile-card__level-num" id="games-level-num">1</span>
+        </div>
+        <div>
+          <strong id="games-level-label">Nível 1</strong>
+          <p id="games-xp-label">0 XP</p>
+        </div>
+      </div>
+      <div class="games-profile-card__coins">
+        <span>🪙</span>
+        <strong id="games-coins">0</strong>
+      </div>
+    </div>
+
+    <div class="games-badges" id="games-badges"><!-- populado via games-hub.js --></div>
+
+    <div class="section-title" style="margin-top: var(--sp-5)">
+      <h2>Escolha um jogo</h2>
+    </div>
+    <div class="games-grid" id="games-grid"><!-- populado via games-hub.js --></div>
+  </section>
+
+  <!-- ======================= MINIJOGOS: TELA DE JOGO ======================= -->
+  <section id="screen-game-play" class="screen" aria-label="Jogando">
+    <header class="screen-header screen-header--back">
+      <button type="button" class="btn-icon" id="game-back" aria-label="Voltar aos minijogos">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <h1 id="game-title">Jogo</h1>
+      <div class="game-hud">
+        <span class="game-hud__timer" id="game-timer" hidden>⏱ <span id="game-timer-value">30</span></span>
+        <span class="game-hud__score" id="game-score" hidden>0/0</span>
+      </div>
+    </header>
+
+    <div class="segmented" id="game-difficulty-bar">
+      <button type="button" class="segmented__item" data-game-difficulty="facil">Fácil</button>
+      <button type="button" class="segmented__item" data-game-difficulty="medio">Médio</button>
+      <button type="button" class="segmented__item" data-game-difficulty="dificil">Difícil</button>
+    </div>
+
+    <div id="game-body"><!-- populado dinamicamente pelo motor de cada jogo --></div>
+  </section>
+
+
+  <!-- ======================= LEITURA ======================= -->
+  <section id="screen-reading" class="screen" aria-label="Leitura">
+    <header class="screen-header">
+      <h1>Leitura</h1>
+    </header>
+
+    <div class="segmented" role="tablist">
+      <button type="button" class="segmented__item is-active" data-tab="reading-active" role="tab">Ativa</button>
+      <button type="button" class="segmented__item" data-tab="reading-done" role="tab">Concluída</button>
+      <button type="button" class="segmented__item" data-tab="reading-favorites" role="tab">Favoritos</button>
+    </div>
+
+    <div class="tab-panel is-active" id="reading-active">
+      <div class="glass-card reading-goal">
+        <span class="reading-goal__label">Meta de leitura</span>
+        <strong id="reading-goal-count">3/5 textos por semana</strong>
+        <div class="progress-bar"><div class="progress-bar__fill" id="reading-goal-bar"></div></div>
+      </div>
+
+      <div class="section-title"><h2>Estatísticas</h2></div>
+      <div class="stats-row">
+        <div class="glass-card stat-chip"><strong id="reading-stat-texts">12</strong><span>Textos lidos</span></div>
+        <div class="glass-card stat-chip"><strong id="reading-stat-time">5h 30m</strong><span>Tempo de leitura</span></div>
+        <div class="glass-card stat-chip"><strong id="reading-stat-comprehension">85%</strong><span>Compreensão</span></div>
+      </div>
+
+      <div class="glass-card reading-summary">
+        <h3>Resumo da última leitura</h3>
+        <p id="reading-summary-text">Você leu 2 textos hoje. Continue assim para alcançar sua meta semanal!</p>
+      </div>
+
+      <button type="button" class="btn btn-primary" id="reading-start">Ler um texto agora</button>
+    </div>
+
+    <div class="tab-panel" id="reading-done">
+      <p class="tab-panel__hint">Os textos que você concluir aparecem aqui.</p>
+    </div>
+    <div class="tab-panel" id="reading-favorites">
+      <p class="tab-panel__hint">Marque textos como favoritos durante a leitura para salvá-los aqui.</p>
+    </div>
+  </section>
+
+  <!-- ======================= SESSÃO DE LEITURA (texto + perguntas) ======================= -->
+  <section id="screen-reading-session" class="screen" aria-label="Sessão de leitura">
+    <header class="screen-header screen-header--back">
+      <button type="button" class="btn-icon" data-nav="reading" aria-label="Voltar">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <h1 id="reading-session-title">Texto</h1>
+    </header>
+    <div class="glass-card reading-session__text" id="reading-session-text"></div>
+    <div id="reading-session-questions"><!-- populado via reading.js --></div>
+    <button type="button" class="btn btn-primary" id="reading-session-submit">Ver resultado</button>
+  </section>
+
+  <!-- ======================= PROGRESSO (PLANO + VOCABULÁRIO) ======================= -->
+  <section id="screen-progress" class="screen" aria-label="Progresso">
+    <header class="screen-header">
+      <h1>Plano de Estudo</h1>
+    </header>
+
+    <div class="segmented" role="tablist">
+      <button type="button" class="segmented__item is-active" data-tab="plan-daily" role="tab">Diário</button>
+      <button type="button" class="segmented__item" data-tab="plan-weekly" role="tab">Semanal</button>
+      <button type="button" class="segmented__item" data-tab="plan-monthly" role="tab">Mensal</button>
+    </div>
+
+    <div class="tab-panel is-active" id="plan-daily">
+      <div class="section-title">
+        <h2>Hoje</h2>
+        <span id="plan-progress-label">3 de 4 concluídos</span>
+      </div>
+      <ul class="checklist" id="plan-checklist"><!-- populado via progress.js --></ul>
+
+      <div class="glass-card plan-focus">
+        <span class="plan-focus__label">Foco da semana</span>
+        <strong id="plan-focus-text">Escrever com mais clareza</strong>
+        <div class="progress-bar"><div class="progress-bar__fill" id="plan-focus-bar"></div></div>
+        <span class="plan-focus__pct" id="plan-focus-pct">38%</span>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="plan-weekly">
+      <p class="tab-panel__hint">Cronograma semanal chega numa próxima atualização — por ora, acompanhe pelo foco da semana acima.</p>
+    </div>
+    <div class="tab-panel" id="plan-monthly">
+      <p class="tab-panel__hint">Visão mensal chega numa próxima atualização.</p>
+    </div>
+
+    <div class="section-title" style="margin-top: var(--sp-6)">
+      <h2>Evolução</h2>
+    </div>
+    <div class="glass-card chart-card">
+      <span class="chart-card__label">Palavras escritas — últimos 7 dias</span>
+      <div class="chart-card__canvas-wrap">
+        <canvas id="chart-words" height="160"></canvas>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top: var(--sp-6)">
+      <h2>Vocabulário</h2>
+    </div>
+    <form class="vocab-add" id="vocab-add-form">
+      <input type="text" id="vocab-add-word" placeholder="Adicionar palavra nova..." spellcheck="false" autocorrect="off" data-custom-keyboard inputmode="none">
+      <button type="submit" class="btn-icon" aria-label="Adicionar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </form>
+    <ul class="vocab-list" id="vocab-list"><!-- populado via progress.js --></ul>
+  </section>
+
+  <!-- ======================= PERFIL ======================= -->
+  <section id="screen-profile" class="screen" aria-label="Perfil">
+    <header class="screen-header">
+      <h1>Perfil</h1>
+    </header>
+
+    <div class="profile-card">
+      <div class="profile-card__avatar" id="profile-avatar">✍️</div>
+      <input type="text" id="profile-name" class="profile-card__name-input" value="Williams">
+    </div>
+
+    <div class="section-title"><h2>Meta diária</h2></div>
+    <div class="field">
+      <label for="profile-goal">Palavras por dia</label>
+      <input type="number" id="profile-goal" min="50" step="50" value="500">
+    </div>
+
+    <div class="section-title" style="margin-top: var(--sp-5)"><h2>Preferências</h2></div>
+    <label class="switch-row">
+      <span>Notificações de lembrete</span>
+      <input type="checkbox" id="profile-notifications" checked>
+      <span class="switch"></span>
+    </label>
+    <label class="switch-row" style="margin-top: var(--sp-2)">
+      <span>Teclado customizado (sem corretor)</span>
+      <input type="checkbox" id="profile-custom-keyboard" checked>
+      <span class="switch"></span>
+    </label>
+    <p class="profile-footnote">Substitui o teclado do celular por um dentro do próprio app, sem autocorretor nem sublinhado vermelho. Desligue se preferir o teclado nativo.</p>
+
+    <div class="section-title" style="margin-top: var(--sp-5)"><h2>IA</h2></div>
+    <p class="profile-footnote">Configure sua própria chave para a IA funcionar de verdade (correção, chat, leitura). Ela fica salva só neste navegador e as chamadas vão direto daqui pro provedor escolhido.</p>
+
+    <div class="field" style="margin-top: var(--sp-3)">
+      <label for="profile-ai-provider">Provedor</label>
+      <select id="profile-ai-provider" class="select-input">
+        <option value="groq">Groq (recomendado — rápido e gratuito p/ testar)</option>
+        <option value="openai">OpenAI</option>
+        <option value="gemini">Gemini</option>
+      </select>
+    </div>
+    <div class="field" style="margin-top: var(--sp-3)">
+      <label for="profile-ai-key">Chave de API</label>
+      <input type="password" id="profile-ai-key" placeholder="cole sua chave aqui" autocomplete="off">
+    </div>
+    <p class="profile-footnote" id="profile-ai-hint">Consiga uma chave gratuita em console.groq.com/keys</p>
+
+    <div class="editor__actions" style="margin-top: var(--sp-3)">
+      <button type="button" class="btn btn-secondary" id="profile-ai-save">Salvar chave</button>
+      <button type="button" class="btn btn-primary" id="profile-ai-test">Testar conexão</button>
+    </div>
+    <p class="profile-footnote" id="profile-ai-status"></p>
+
+    <div class="section-title" style="margin-top: var(--sp-6)"><h2>Dados</h2></div>
+    <button type="button" class="btn btn-secondary" id="profile-reset">Limpar dados locais</button>
+    <p class="profile-footnote">O Scripta guarda tudo neste dispositivo. Limpar os dados apaga textos, vocabulário, progresso e a chave de IA salvos aqui.</p>
+  </section>
+
+  <!-- ======================= BOTTOM NAV ======================= -->
+  <nav class="bottom-nav" id="bottom-nav" hidden>
+    <button type="button" class="nav-item is-active" data-nav="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      Início
+    </button>
+    <button type="button" class="nav-item" data-nav="editor">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
+      Escrita
+    </button>
+
+    <!-- Botão flutuante central: sempre inicia um texto novo -->
+    <button type="button" class="nav-fab" data-nav="editor" aria-label="Começar a escrever">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+
+    <button type="button" class="nav-item" data-nav="reading">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+      Leitura
+    </button>
+    <button type="button" class="nav-item" data-nav="profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+      Perfil
+    </button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Teclado customizado — substitui o teclado nativo nos campos marcados
+       com data-custom-keyboard, pra evitar o corretor/sublinhado do sistema. -->
+  <div class="custom-keyboard" id="custom-keyboard" hidden></div>
+</div>
+
+<script src="assets/vendor/chart.umd.min.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/keyboard.js"></script>
+<script src="js/splash.js"></script>
+<script src="js/home.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/coach.js"></script>
+<script src="js/exercises.js"></script>
+<script src="js/games-content.js"></script>
+<script src="js/games-engine.js"></script>
+<script src="js/games-special.js"></script>
+<script src="js/games-hub.js"></script>
+<script src="js/reading.js"></script>
+<script src="js/progress.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
